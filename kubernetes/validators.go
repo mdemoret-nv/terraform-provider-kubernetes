@@ -137,6 +137,16 @@ func validatePortNumOrName(value interface{}, key string) (ws []string, es []err
 func validateResourceList(value interface{}, key string) (ws []string, es []error) {
 	m := value.(map[string]interface{})
 	for k, value := range m {
+
+		if strings.Contains(k, "/") {
+			// This is an extended resource, validate a qualified name. See https://kubernetes.io/docs/concepts/configuration/manage-compute-resources-container/#extended-resources
+			for _, msg := range utilValidation.IsQualifiedName(k) {
+				es = append(es, fmt.Errorf("%s.%s: Extended resource name must be a valid qualified name: %s", key, k, msg))
+			}
+		} else if k != "cpu" && k != "memory" {
+			es = append(es, fmt.Errorf("%s.%s: %s", key, k, "Non-extended resource name must be either 'cpu' or 'memory'"))
+		}
+
 		if _, ok := value.(int); ok {
 			continue
 		}

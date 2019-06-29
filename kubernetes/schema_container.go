@@ -92,52 +92,26 @@ func handlerFields() map[string]*schema.Schema {
 func resourcesField() map[string]*schema.Schema {
 	return map[string]*schema.Schema{
 		"limits": {
-			Type:        schema.TypeList,
-			Optional:    true,
-			Computed:    true,
-			MaxItems:    1,
-			Description: "Describes the maximum amount of compute resources allowed. More info: http://kubernetes.io/docs/user-guide/compute-resources/",
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"cpu": {
-						Type:             schema.TypeString,
-						Optional:         true,
-						Computed:         true,
-						ValidateFunc:     validateResourceQuantity,
-						DiffSuppressFunc: suppressEquivalentResourceQuantity,
-					},
-					"memory": {
-						Type:             schema.TypeString,
-						Optional:         true,
-						Computed:         true,
-						ValidateFunc:     validateResourceQuantity,
-						DiffSuppressFunc: suppressEquivalentResourceQuantity,
-					},
-				},
+			Type:         schema.TypeMap,
+			Optional:     true,
+			ForceNew:     true,
+			Description:  "Describes the maximum amount of compute resources allowed. More info: http://kubernetes.io/docs/user-guide/compute-resources/",
+			ValidateFunc: validateResourceList,
+			Elem: &schema.Schema{
+				Type:             schema.TypeString,
+				ValidateFunc:     validateResourceQuantity,
+				DiffSuppressFunc: suppressEquivalentResourceQuantity,
 			},
 		},
 		"requests": {
-			Type:     schema.TypeList,
-			Optional: true,
-			Computed: true,
-			MaxItems: 1,
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"cpu": {
-						Type:             schema.TypeString,
-						Optional:         true,
-						Computed:         true,
-						ValidateFunc:     validateResourceQuantity,
-						DiffSuppressFunc: suppressEquivalentResourceQuantity,
-					},
-					"memory": {
-						Type:             schema.TypeString,
-						Optional:         true,
-						Computed:         true,
-						ValidateFunc:     validateResourceQuantity,
-						DiffSuppressFunc: suppressEquivalentResourceQuantity,
-					},
-				},
+			Type:         schema.TypeMap,
+			Optional:     true,
+			ForceNew:     true,
+			ValidateFunc: validateResourceList,
+			Elem: &schema.Schema{
+				Type:             schema.TypeString,
+				ValidateFunc:     validateResourceQuantity,
+				DiffSuppressFunc: suppressEquivalentResourceQuantity,
 			},
 		},
 	}
